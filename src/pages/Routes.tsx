@@ -3,13 +3,13 @@ import {
     Navigate,
     RouterProvider,
 } from "react-router-dom";
-import { MainPage } from "./MainPage";
+import { SearchPage } from "./SearchPage";
 
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <MainPage />,
+        element: <SearchPage />,
     },
 
     {

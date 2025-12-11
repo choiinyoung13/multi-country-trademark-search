@@ -1,8 +1,13 @@
-import { Routes } from 'react-router-dom'
 import './App.css'
+import { Routes } from './pages/Routes'
+import { PageLayout } from './pages/PageLayout'
 
 function App() {
-  return <Routes />
+  return (
+    <PageLayout>
+      <Routes />
+    </PageLayout>
+  )
 }
 
 export default App
