@@ -4,9 +4,15 @@ interface BottomSheetProps {
   isOpen: boolean
   onClose: () => void
   children: ReactNode
+  onReset?: () => void
 }
 
-export function BottomSheet({ isOpen, onClose, children }: BottomSheetProps) {
+export function BottomSheet({
+  isOpen,
+  onClose,
+  children,
+  onReset,
+}: BottomSheetProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -28,16 +34,43 @@ export function BottomSheet({ isOpen, onClose, children }: BottomSheetProps) {
         onClick={onClose}
       />
 
-      <div className="fixed inset-x-0 bottom-0 z-50 w-[97.5%] mx-auto bg-white rounded-t-3xl shadow-xl animate-slide-up">
-        <div className="w-full p-5 min-[390px]:p-8">
+      <div className="fixed inset-x-0 bottom-0 z-50 w-[97.5%] mx-auto bg-white rounded-t-3xl shadow-xl animate-slide-up max-h-[95vh] flex flex-col">
+        <div className="flex-1 overflow-hidden w-full p-5 min-[390px]:p-8">
           {children}
+        </div>
 
-          <button
-            onClick={onClose}
-            className="w-full mt-6 min-[390px]:mt-8 py-3.5 min-[390px]:py-4 bg-[#3b9bff] text-white text-sm min-[390px]:text-base font-semibold rounded-xl cursor-pointer hover:bg-[#2e86e4] transition-colors"
-          >
-            닫기
-          </button>
+        <div className="shrink-0 px-5 min-[390px]:px-8 pb-5 min-[390px]:pb-8 pt-0">
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className={`${
+                onReset ? 'flex-1' : 'w-full'
+              } py-3.5 min-[390px]:py-4 bg-markcloud-blue text-white text-sm min-[390px]:text-base font-semibold rounded-xl cursor-pointer hover:bg-[#2e86e4] transition-colors`}
+            >
+              닫기
+            </button>
+            {onReset && (
+              <button
+                onClick={onReset}
+                className="flex items-center justify-center gap-2 px-4 py-3.5 min-[390px]:py-4 text-sm min-[390px]:text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                <span className="hidden min-[390px]:block">초기화</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>

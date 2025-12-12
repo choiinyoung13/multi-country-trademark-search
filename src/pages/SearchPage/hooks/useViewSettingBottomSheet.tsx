@@ -20,14 +20,11 @@ export function useViewSettingBottomSheet() {
     [isOpen, close]
   )
 
-  return useMemo(
-    () => ({
-      open,
-      close,
-      viewSettingBottomSheet,
-    }),
-    [open, close, viewSettingBottomSheet]
-  )
+  return {
+    open,
+    close,
+    viewSettingBottomSheet,
+  }
 }
 
 function ViewSettingBottomSheet({
@@ -52,8 +49,10 @@ function ViewSettingBottomSheet({
     setSettings(newSettings)
   }
 
+  const handleReset = () => {}
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
+    <BottomSheet isOpen={isOpen} onClose={onClose} onReset={handleReset}>
       <div className="space-y-6 min-[390px]:space-y-8">
         {/* 등록 상태 필터 */}
         <div>

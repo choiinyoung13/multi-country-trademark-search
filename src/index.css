@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-markcloud-blue: #3b9bff;
+}
+
 @keyframes slide-up {
   from {
     transform: translateY(100%);
