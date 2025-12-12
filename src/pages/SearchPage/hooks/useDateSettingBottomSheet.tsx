@@ -1,13 +1,19 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { BottomSheet } from '../../../components/BottomSheet'
+import { useFilterStore } from '../../../stores/filterStore'
 
 export function useDateSettingBottomSheet() {
   const [isOpen, setIsOpen] = useState(false)
 
-  const open = useCallback(() => setIsOpen(true), [])
-  const close = useCallback(() => setIsOpen(false), [])
+  const open = useCallback(() => {
+    setIsOpen(true)
+  }, [])
+
+  const close = useCallback(() => {
+    setIsOpen(false)
+  }, [])
 
   const dateSettingBottomSheet = useMemo(
     () =>
@@ -37,15 +43,49 @@ function DateSettingBottomSheet({
   isOpen: boolean
   onClose: () => void
 }) {
+  const { dateRange, setDateRange } = useFilterStore()
   // 선택된 시작 날짜와 끝 날짜 (예: "2025-09-25")
-  const [tempStartDate, setTempStartDate] = useState<string>('2025-09-25')
-  const [tempEndDate, setTempEndDate] = useState<string>('2025-11-24')
+  const [tempStartDate, setTempStartDate] = useState<string | null>(
+    dateRange?.startDate || null
+  )
+  const [tempEndDate, setTempEndDate] = useState<string | null>(
+    dateRange?.endDate || null
+  )
+
+  // dateRange가 변경되면 temp 값도 업데이트
+  useEffect(() => {
+    setTempStartDate(dateRange?.startDate || null)
+    setTempEndDate(dateRange?.endDate || null)
+  }, [dateRange])
 
   // 시작 기간과 끝 기간의 연도와 월 (화면에 표시할 달력)
-  const [startYear, setStartYear] = useState<number>(2025)
-  const [startMonth, setStartMonth] = useState<number>(9)
-  const [endYear, setEndYear] = useState<number>(2025)
-  const [endMonth, setEndMonth] = useState<number>(11)
+  const getInitialDate = () => {
+    if (dateRange) {
+      const [startY, startM] = dateRange.startDate.split('-').map(Number)
+      const [endY, endM] = dateRange.endDate.split('-').map(Number)
+      return {
+        startYear: startY,
+        startMonth: startM,
+        endYear: endY,
+        endMonth: endM,
+      }
+    }
+    const now = new Date()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
+    return {
+      startYear: currentYear,
+      startMonth: currentMonth,
+      endYear: currentYear,
+      endMonth: currentMonth,
+    }
+  }
+
+  const initialDate = getInitialDate()
+  const [startYear, setStartYear] = useState<number>(initialDate.startYear)
+  const [startMonth, setStartMonth] = useState<number>(initialDate.startMonth)
+  const [endYear, setEndYear] = useState<number>(initialDate.endYear)
+  const [endMonth, setEndMonth] = useState<number>(initialDate.endMonth)
 
   // 모바일에서 활성화된 탭 ('start' | 'end')
   const [activeTab, setActiveTab] = useState<'start' | 'end'>('start')
@@ -69,16 +109,19 @@ function DateSettingBottomSheet({
 
   // 초기화 버튼 클릭
   const handleReset = () => {
-    setTempStartDate('2025-09-25')
-    setTempEndDate('2025-11-24')
-    setStartYear(2025)
-    setStartMonth(9)
-    setEndYear(2025)
-    setEndMonth(11)
+    setTempStartDate(null)
+    setTempEndDate(null)
+    const currentYear = new Date().getFullYear()
+    const currentMonth = new Date().getMonth() + 1
+    setStartYear(currentYear)
+    setStartMonth(currentMonth)
+    setEndYear(currentYear)
+    setEndMonth(currentMonth)
     setStartMode('calendar')
     setEndMode('calendar')
     setStartSelectedDecade(null)
     setEndSelectedDecade(null)
+    // 임시 상태를 null로 업데이트 (완료 버튼을 눌러야 실제 상태가 변경됨)
   }
 
   // 년도 선택 렌더링
@@ -252,18 +295,25 @@ function DateSettingBottomSheet({
       ).padStart(2, '0')}`
 
       if (type === 'start') {
+        const newEndDate =
+          tempEndDate && dateStr > tempEndDate
+            ? dateStr
+            : tempEndDate || dateStr
         setTempStartDate(dateStr)
         // 시작 날짜가 끝 날짜보다 늦으면 끝 날짜도 같이 변경
-        if (tempEndDate && dateStr > tempEndDate) {
-          setTempEndDate(dateStr)
+        if (newEndDate !== tempEndDate) {
+          setTempEndDate(newEndDate)
         }
+        // 임시 상태만 업데이트 (완료 버튼 누를 때까지는 실제 변경 안 됨)
       } else {
         setTempEndDate(dateStr)
+        // 임시 상태만 업데이트
       }
     }
 
     const isSelected = (day: number) => {
       const selectedDate = type === 'start' ? tempStartDate : tempEndDate
+      if (!selectedDate) return false
       const [selectedY, selectedM, selectedD] = selectedDate
         .split('-')
         .map(Number)
@@ -296,7 +346,7 @@ function DateSettingBottomSheet({
       if (type === 'start') {
         return tempEndDate ? dateStr > tempEndDate : false
       } else {
-        return dateStr < tempStartDate
+        return tempStartDate ? dateStr < tempStartDate : false
       }
     }
 
@@ -442,8 +492,25 @@ function DateSettingBottomSheet({
     )
   }
 
+  const handleCompleteClick = () => {
+    if (tempStartDate && tempEndDate) {
+      setDateRange({
+        startDate: tempStartDate,
+        endDate: tempEndDate,
+      })
+    } else {
+      setDateRange(null)
+    }
+    onClose()
+  }
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} onReset={handleReset}>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      onReset={handleReset}
+      onComplete={handleCompleteClick}
+    >
       <div className="space-y-6 min-[390px]:space-y-8">
         {/* 모바일 탭 (767px 이하) */}
         <div className="md:hidden flex gap-2 border-b border-gray-200">

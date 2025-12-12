@@ -1,4 +1,4 @@
-import trademarksData from '../../../../trademarks_kr_trademarks.json'
+import trademarksData from '../../../mocks/data/trademarks_kr_trademarks.json'
 import { TrademarkListItem } from './TrademarkListItem'
 
 interface Trademark {

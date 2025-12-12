@@ -101,12 +101,15 @@ function InfoRow({
 
   return (
     <div
-      className={clsx('flex items-start gap-1.5 min-[360px]:gap-2', className)}
+      className={clsx(
+        'flex items-start gap-1.5 min-[360px]:gap-2 min-[800px]:gap-3',
+        className
+      )}
     >
-      <div className="text-[10px] min-[360px]:text-xs text-gray-500 font-medium whitespace-nowrap shrink-0 w-16 min-[360px]:w-20">
+      <div className="text-[10px] min-[360px]:text-xs min-[800px]:text-base text-gray-500 font-medium whitespace-nowrap shrink-0 w-16 min-[360px]:w-20 min-[800px]:w-28">
         {label}
       </div>
-      <div className="text-xs min-[360px]:text-sm text-gray-900 wrap-break-word flex-1">
+      <div className="text-xs min-[360px]:text-sm min-[800px]:text-lg text-gray-900 wrap-break-word flex-1">
         {displayValue}
       </div>
     </div>
@@ -170,7 +173,7 @@ function DetailTramdemarkBottomSheet({
   trademark: Trademark
 }) {
   const [openSections, setOpenSections] = useState<Set<string>>(
-    new Set(['basic', 'registration', 'priority', 'product', 'vienna'])
+    new Set(['basic', 'registration', 'priority', 'product', 'etc'])
   )
 
   const toggleSection = (section: string) => {
@@ -313,9 +316,9 @@ function DetailTramdemarkBottomSheet({
 
         {/* 비엔나 코드 */}
         <AccordionSection
-          title="비엔나 코드"
-          isOpen={openSections.has('vienna')}
-          onToggle={() => toggleSection('vienna')}
+          title="기타"
+          isOpen={openSections.has('etc')}
+          onToggle={() => toggleSection('etc')}
         >
           <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-x-4 min-[480px]:gap-x-6 gap-y-1.5 min-[360px]:gap-y-2">
             <InfoRow label="비엔나 코드" value={trademark.viennaCodeList} />

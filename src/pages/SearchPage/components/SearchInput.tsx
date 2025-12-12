@@ -1,23 +1,26 @@
-import { useState } from 'react'
 import clsx from 'clsx'
-
-type SearchMode = 'name' | 'number'
+import { useFilterStore } from '../../../stores/filterStore'
 
 export function SearchInput() {
-  const [searchValue, setSearchValue] = useState<string>('')
-  const [searchMode, setSearchMode] = useState<SearchMode>('name')
+  const { inputValue, inputMode, setInputValue, setInputMode } =
+    useFilterStore()
 
   const handleClearSearch = () => {
-    setSearchValue('')
+    setInputValue('')
+  }
+
+  const handleSearch = () => {
+    console.log('검색:', inputValue, inputMode)
+    // 실제 검색 로직은 여기에 추가
   }
 
   const toggleSearchMode = () => {
-    setSearchMode(prev => (prev === 'name' ? 'number' : 'name'))
-    setSearchValue('')
+    setInputMode(inputMode === 'name' ? 'number' : 'name')
+    setInputValue('')
   }
 
   const placeholder =
-    searchMode === 'name' ? '상표명으로 검색' : '출원번호로 검색'
+    inputMode === 'name' ? '상표명으로 검색' : '출원번호로 검색'
 
   return (
     <div className="relative w-full max-w-[657px] flex items-center">
@@ -43,14 +46,14 @@ export function SearchInput() {
       </button>
 
       {/* Input 컨테이너 */}
-      <div className="relative flex-1">
+      <div className="relative flex-1 flex items-center">
         {/* 검색 아이콘 */}
         <svg
           className={clsx(
-            'absolute left-3 min-[360px]:left-3.5 min-[390px]:left-4 top-1/2 -translate-y-1/2 w-4 h-4 min-[360px]:w-4.5 min-[360px]:h-4.5 min-[390px]:w-5 min-[390px]:h-5 transition-colors',
+            'absolute left-3 min-[360px]:left-3.5 min-[390px]:left-4 w-4 h-4 min-[360px]:w-4.5 min-[360px]:h-4.5 min-[390px]:w-5 min-[390px]:h-5 transition-colors z-10',
             {
-              'text-gray-400': !searchValue,
-              'text-markcloud-blue': searchValue,
+              'text-gray-400': !inputValue,
+              'text-markcloud-blue': inputValue,
             }
           )}
           fill="none"
@@ -68,16 +71,21 @@ export function SearchInput() {
 
         <input
           type="text"
-          className="w-full h-10 min-[360px]:h-11 min-[390px]:h-[44px] pl-10 min-[360px]:pl-11 min-[390px]:pl-12 pr-4 min-[360px]:pr-4.5 min-[390px]:pr-5 text-sm min-[360px]:text-[15px] min-[390px]:text-[16px] bg-white text-gray-500 font-medium rounded-tr-xl rounded-br-xl rounded-tl-none rounded-bl-none border border-gray-200 shadow-[0_4px_15px_rgba(0,0,0,0.07)] focus:outline-none placeholder:font-medium"
+          className="w-full h-10 min-[360px]:h-11 min-[390px]:h-[44px] pl-10 min-[360px]:pl-11 min-[390px]:pl-12 pr-12 min-[360px]:pr-14 min-[390px]:pr-12 text-sm min-[360px]:text-[15px] min-[390px]:text-[16px] bg-white text-gray-500 font-medium rounded-none border border-l-0 border-gray-200 shadow-[0_4px_15px_rgba(0,0,0,0.07)] focus:outline-none placeholder:font-medium"
           placeholder={placeholder}
-          value={searchValue}
-          onChange={e => setSearchValue(e.target.value)}
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              handleSearch()
+            }
+          }}
         />
 
         {/* 취소 아이콘 */}
-        {searchValue && (
+        {inputValue && (
           <button
-            className="absolute right-2 min-[360px]:right-2.5 min-[390px]:right-3 top-1/2 -translate-y-1/2 w-5 h-5 min-[360px]:w-5.5 min-[360px]:h-5.5 min-[390px]:w-6 min-[390px]:h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 cursor-pointer"
+            className="absolute right-12 min-[360px]:right-14 min-[390px]:right-16 top-1/2 -translate-y-1/2 w-5 h-5 min-[360px]:w-5.5 min-[360px]:h-5.5 min-[390px]:w-6 min-[390px]:h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 cursor-pointer z-10"
             onClick={handleClearSearch}
             type="button"
           >
@@ -96,6 +104,17 @@ export function SearchInput() {
             </svg>
           </button>
         )}
+
+        {/* 검색 버튼 */}
+        <button
+          type="button"
+          onClick={handleSearch}
+          className="flex items-center justify-center px-2 min-[360px]:px-2.5 min-[390px]:px-3 h-10 min-[360px]:h-11 min-[390px]:h-[44px] rounded-tr-xl rounded-br-xl bg-gray-100 border border-l-0 border-gray-200 hover:bg-gray-200 transition-colors text-gray-500 cursor-pointer shrink-0"
+        >
+          <span className="text-[10px] min-[360px]:text-xs min-[390px]:text-sm font-medium whitespace-nowrap">
+            검색
+          </span>
+        </button>
       </div>
     </div>
   )
