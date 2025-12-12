@@ -82,12 +82,8 @@ export function filterKrTrademarks(
     }
 
     if (params.status) {
-      const filterStatus = params.status.toLowerCase()
-      const itemStatus = item.registerStatus.toLowerCase()
-      const normalizedStatus = normalizeKrStatus(
-        item.registerStatus
-      ).toLowerCase()
-      if (itemStatus !== filterStatus && normalizedStatus !== filterStatus) {
+      // 한국은 원본 상태값과 직접 비교
+      if (item.registerStatus !== params.status) {
         return false
       }
     }
@@ -120,12 +116,8 @@ export function filterUsTrademarks(
     }
 
     if (params.status) {
-      const filterStatus = params.status.toLowerCase()
-      const itemStatus = item.registerStatus.toLowerCase()
-      const normalizedStatus = normalizeUsStatus(
-        item.registerStatus
-      ).toLowerCase()
-      if (itemStatus !== filterStatus && normalizedStatus !== filterStatus) {
+      // 미국은 원본 상태값과 직접 비교
+      if (item.registerStatus !== params.status) {
         return false
       }
     }

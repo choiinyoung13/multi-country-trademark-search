@@ -55,3 +55,24 @@ export type StandardTrademark = {
   status: string
   detailData: KrTrademark | UsTrademark
 }
+
+/**
+ * 검색 쿼리 파라미터
+ */
+export type TrademarkQueryParams = {
+  country: 'KR' | 'US'
+  query?: string // 상표명 검색어
+  applicationNumber?: string // 출원번호 (정확한 매칭)
+  status?: string // 등록 상태 필터
+  startDate?: string // 출원일 시작 (YYYYMMDD)
+  endDate?: string // 출원일 종료 (YYYYMMDD)
+  favoriteOnly?: boolean // 즐겨찾기만 보기
+}
+
+/**
+ * 정렬 옵션
+ */
+export type SortOption = {
+  field: 'applicationDate' | 'trademarkName'
+  order: 'asc' | 'desc'
+}

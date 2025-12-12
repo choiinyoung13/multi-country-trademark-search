@@ -12,7 +12,6 @@ export function SearchHeader() {
           <SearchHeaderActions />
         </div>
       </header>
-      \
     </>
   )
 }

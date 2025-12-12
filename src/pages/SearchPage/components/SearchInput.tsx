@@ -10,8 +10,9 @@ export function SearchInput() {
   }
 
   const handleSearch = () => {
-    console.log('검색:', inputValue, inputMode)
-    // 실제 검색 로직은 여기에 추가
+    // inputValue가 이미 filterStore에 저장되어 있으므로
+    // React Query가 자동으로 재요청됩니다.
+    // 검색 실행을 명시적으로 표시하기 위해 빈 함수로 유지
   }
 
   const toggleSearchMode = () => {
