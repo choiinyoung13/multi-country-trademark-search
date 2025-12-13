@@ -11,11 +11,8 @@ import type {
 export function normalizeKrStatus(status: string): string {
   const statusMap: Record<string, string> = {
     등록: 'REGISTERED',
-    출원: 'PENDING',
     거절: 'REJECTED',
     실효: 'EXPIRED',
-    취하: 'WITHDRAWN',
-    무효: 'INVALID',
   }
   return statusMap[status] || status.toUpperCase()
 }

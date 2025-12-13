@@ -83,13 +83,36 @@ export function TrademarkListItem({ trademark }: TrademarkListItemProps) {
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation()
+
     const newFavorite = toggleFavorite(
       trademark.countryCode,
       trademark.applicationNumber
     )
+
+    // 1️⃣ ListItem 자체 상태 업데이트
     setFavorite(newFavorite)
-    // React Query 캐시 무효화하여 목록 갱신
-    queryClient.invalidateQueries({ queryKey: ['trademarks'] })
+
+    // 2️⃣ React Query 캐시 직접 수정
+    queryClient.setQueriesData<StandardTrademark[]>(
+      { queryKey: ['trademarks'] },
+      old => {
+        if (!old) return old
+
+        return old.map(item => {
+          if (
+            item.countryCode === trademark.countryCode &&
+            item.applicationNumber === trademark.applicationNumber
+          ) {
+            return {
+              ...item,
+              // 서버에는 없지만 프론트 캐시 확장
+              isFavorite: newFavorite,
+            }
+          }
+          return item
+        })
+      }
+    )
   }
 
   const originalStatus = getOriginalStatus(trademark)
