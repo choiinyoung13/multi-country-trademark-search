@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useTrademarksQuery } from '../../../hooks/useTrademarksQuery'
+import { useTrademarksQuery } from '../hooks/useTrademarksQuery'
 import { useFilterStore } from '../../../stores/filterStore'
 import { useViewSettingStore } from '../../../stores/viewSettingStore'
 import { TrademarkListItem } from './TrademarkListItem'
@@ -11,12 +11,13 @@ const ITEMS_PER_PAGE = 15
 const SCROLL_THRESHOLD = 200 // 하단 200px 전에 미리 로드
 
 export function TrademarkList() {
-  const { data: trademarks, isLoading, isError, error } = useTrademarksQuery()
+  const { data: trademarks, isLoading, isError } = useTrademarksQuery()
   const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE)
   const isLoadingMoreRef = useRef(false)
 
   // 검색 조건 구독
-  const { selectedCountry, inputValue, inputMode, dateRange } = useFilterStore()
+  const { selectedCountry, searchQuery, inputMode, dateRange } =
+    useFilterStore()
   const { status, dateSort, favoriteSort } = useViewSettingStore()
 
   // 검색 조건이 변경되면 표시 개수 초기화
@@ -27,7 +28,7 @@ export function TrademarkList() {
     window.scrollTo(0, 0)
   }, [
     selectedCountry,
-    inputValue,
+    searchQuery,
     inputMode,
     dateRange,
     status,
@@ -77,16 +78,7 @@ export function TrademarkList() {
 
   // 에러 상태
   if (isError) {
-    return (
-      <ErrorMessage
-        message={
-          error instanceof Error
-            ? error.message
-            : '알 수 없는 오류가 발생했습니다.'
-        }
-        onRetry={() => window.location.reload()}
-      />
-    )
+    return <ErrorMessage onRetry={() => window.location.reload()} />
   }
 
   // 빈 결과

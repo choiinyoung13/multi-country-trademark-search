@@ -1,4 +1,4 @@
-import { useTrademarksQuery } from '../../../hooks/useTrademarksQuery'
+import { useTrademarksQuery } from '../hooks/useTrademarksQuery'
 
 export function SearchHeaderTitle() {
   const { data: trademarks, isLoading } = useTrademarksQuery()

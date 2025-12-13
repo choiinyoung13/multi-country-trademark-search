@@ -12,11 +12,11 @@ export type InputMode = 'name' | 'number'
 interface FilterState {
   selectedCountry: CountryCode
   dateRange: DateRange | null
-  inputValue: string
+  searchQuery: string
   inputMode: InputMode
   setSelectedCountry: (country: CountryCode) => void
   setDateRange: (range: DateRange | null) => void
-  setInputValue: (value: string) => void
+  setSearchQuery: (value: string) => void
   setInputMode: (mode: InputMode) => void
   reset: () => void
 }
@@ -24,7 +24,7 @@ interface FilterState {
 const defaultState = {
   selectedCountry: 'KR' as CountryCode,
   dateRange: null as DateRange | null,
-  inputValue: '',
+  searchQuery: '',
   inputMode: 'name' as InputMode,
 }
 
@@ -33,7 +33,7 @@ export const useFilterStore = create<FilterState>(set => ({
   setSelectedCountry: (country: CountryCode) =>
     set({ selectedCountry: country }),
   setDateRange: (range: DateRange | null) => set({ dateRange: range }),
-  setInputValue: (value: string) => set({ inputValue: value }),
+  setSearchQuery: (value: string) => set({ searchQuery: value }),
   setInputMode: (mode: InputMode) => set({ inputMode: mode }),
   reset: () => set(defaultState),
 }))

@@ -10,23 +10,27 @@ import {
   filterKrTrademarks,
   filterUsTrademarks,
 } from '../mocks/utils/trademark'
-import krData from '../mocks/data/trademarks_kr_trademarks.json'
-import usData from '../mocks/data/trademarks_us_trademarks.json'
 
 /**
  * 한국 상표 데이터 로드
  */
 export async function fetchKrTrademarks(): Promise<KrTrademark[]> {
-  // 실제로는 import된 데이터를 반환하지만, API 호출처럼 보이도록 Promise로 래핑
-  return Promise.resolve(krData as KrTrademark[])
+  const response = await fetch('/api/trademarks/kr')
+  if (!response.ok) {
+    throw new Error('한국 상표 데이터를 불러오는데 실패했습니다')
+  }
+  return response.json()
 }
 
 /**
  * 미국 상표 데이터 로드
  */
 export async function fetchUsTrademarks(): Promise<UsTrademark[]> {
-  // 실제로는 import된 데이터를 반환하지만, API 호출처럼 보이도록 Promise로 래핑
-  return Promise.resolve(usData as UsTrademark[])
+  const response = await fetch('/api/trademarks/us')
+  if (!response.ok) {
+    throw new Error('미국 상표 데이터를 불러오는데 실패했습니다')
+  }
+  return response.json()
 }
 
 /**

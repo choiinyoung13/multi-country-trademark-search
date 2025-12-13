@@ -100,6 +100,10 @@ npm run dev
 - **Tailwind CSS** - 유틸리티 퍼스트 CSS 프레임워크
 - **clsx** - 조건부 클래스 관리
 
+### API 모킹
+
+- **MSW (Mock Service Worker)** - Service Worker 기반 API 모킹
+
 <br/>
 
 ## 💡 주요 기술적 의사결정
@@ -142,7 +146,36 @@ const queryKey = ['trademarks', selectedCountry, inputValue, dateRange, ...]
 
 <br/>
 
-### 2. 다국가 데이터 처리: StandardTrademark 인터페이스
+### 2. API 모킹: MSW (Mock Service Worker)
+
+**선택 이유:**
+
+- **실제 HTTP 요청 인터셉트**: Service Worker를 사용해 네트워크 레벨에서 요청을 가로채므로 실제 API와 동일한 방식으로 개발 가능
+- **로딩 상태 테스트**: `delay()` 함수로 네트워크 지연을 시뮬레이션하여 로딩 UI를 자연스럽게 확인 가능
+- **코드 변경 최소화**: 실제 백엔드 API로 전환 시 엔드포인트만 변경하면 되므로 마이그레이션이 쉬움
+- **개발 환경 독립성**: 백엔드 API 없이도 독립적으로 프론트엔드 개발 가능
+
+**구현 방식:**
+
+```typescript
+// handlers.ts - API 엔드포인트 정의
+export const handlers = [
+  http.get('/api/trademarks/kr', async () => {
+    await delay(1000) // 로딩 상태 확인을 위한 1초 딜레이
+    return HttpResponse.json(krData)
+  }),
+]
+
+// trademarkApi.ts - 실제 API 호출과 동일한 방식
+export async function fetchKrTrademarks(): Promise<KrTrademark[]> {
+  const response = await fetch('/api/trademarks/kr')
+  return response.json()
+}
+```
+
+<br/>
+
+### 3. 다국가 데이터 처리: StandardTrademark 인터페이스
 
 **설계 의도:**
 
@@ -191,7 +224,7 @@ type StandardTrademark = {
 
 <br/>
 
-### 3. 반응형 디자인
+### 4. 반응형 디자인
 
 **Mobile-First 접근:**
 
@@ -373,7 +406,7 @@ const statusColor = getStatusColor(originalStatus, trademark.countryCode)
 
 <br/>
 
-### 2. 로컬 상태와 서버 상태 분리로 인한 캐시 동기화 문제 해결
+### 2. 즐겨찾기 상태 동기화: 로컬 상태와 서버 캐시 분리 문제 해결
 
 **문제:**
 

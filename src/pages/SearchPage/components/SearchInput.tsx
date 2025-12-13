@@ -1,23 +1,25 @@
+import { useState } from 'react'
 import clsx from 'clsx'
 import { useFilterStore } from '../../../stores/filterStore'
 
 export function SearchInput() {
-  const { inputValue, inputMode, setInputValue, setInputMode } =
-    useFilterStore()
+  const { inputMode, setSearchQuery, setInputMode } = useFilterStore()
+  const [inputValue, setInputValue] = useState('')
 
   const handleClearSearch = () => {
     setInputValue('')
+    setSearchQuery('')
   }
 
   const handleSearch = () => {
-    // inputValue가 이미 filterStore에 저장되어 있으므로
-    // React Query가 자동으로 재요청됩니다.
-    // 검색 실행을 명시적으로 표시하기 위해 빈 함수로 유지
+    // 검색 버튼 클릭 시 실제 검색 쿼리 업데이트
+    setSearchQuery(inputValue)
   }
 
   const toggleSearchMode = () => {
     setInputMode(inputMode === 'name' ? 'number' : 'name')
     setInputValue('')
+    setSearchQuery('')
   }
 
   const placeholder =

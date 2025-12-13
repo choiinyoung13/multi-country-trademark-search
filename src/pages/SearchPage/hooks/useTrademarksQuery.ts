@@ -1,26 +1,27 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTrademarks } from '../services/trademarkApi'
-import { buildQueryParams } from '../utils/queryParams'
-import { dateSortToSortOption } from '../utils/sortTrademarks'
-import { sortTrademarks } from '../utils/sortTrademarks'
-import { filterFavorites } from '../utils/favorites'
-import { useFilterStore } from '../stores/filterStore'
-import { useViewSettingStore } from '../stores/viewSettingStore'
-import type { StandardTrademark } from '../types/trademark'
+import { getTrademarks } from '../../../services/trademarkApi'
+import { buildQueryParams } from '../../../utils/queryParams'
+import { dateSortToSortOption } from '../../../utils/sortTrademarks'
+import { sortTrademarks } from '../../../utils/sortTrademarks'
+import { filterFavorites } from '../../../utils/favorites'
+import { useFilterStore } from '../../../stores/filterStore'
+import { useViewSettingStore } from '../../../stores/viewSettingStore'
+import type { StandardTrademark } from '../../../types/trademark'
 
 /**
  * 상표 목록 조회 훅
  * filterStore와 viewSettingStore의 상태를 기반으로 데이터를 조회합니다.
  */
 export function useTrademarksQuery() {
-  const { selectedCountry, inputValue, inputMode, dateRange } = useFilterStore()
+  const { selectedCountry, searchQuery, inputMode, dateRange } =
+    useFilterStore()
 
   const { status, dateSort, favoriteSort } = useViewSettingStore()
 
   // 쿼리 파라미터 생성 (favoriteOnly는 제외하고 생성)
   const queryParams = buildQueryParams(
     selectedCountry,
-    inputValue,
+    searchQuery,
     inputMode,
     dateRange,
     status,
