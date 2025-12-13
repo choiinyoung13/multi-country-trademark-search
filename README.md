@@ -10,6 +10,7 @@
 
 - Node.js 18.x 이상
 - npm 또는 yarn
+- node_modules 폴더는 제거한 상태로 첨부하였으니, 프로젝트 확인 시 의존성 설치(npm install)부터 진행해 주시기 바랍니다.
 
 ### 설치 및 실행
 
